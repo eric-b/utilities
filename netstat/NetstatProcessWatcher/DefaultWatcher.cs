@@ -43,6 +43,18 @@ namespace NetstatProcessWatcher
             }
         }
 
+        protected Process GetProcessbyIdOrNull(int pid)
+        {
+            try
+            {
+                return Process.GetProcessById(pid);
+            }
+            catch (ArgumentException)
+            {
+                return null;
+            }
+        }
+
         protected virtual void WriteOutput(IEnumerable<NetstatOutput> output, List<ProcessInfo> processInfos)
         {
             m_Logger.Info("\r\n{0:HH:mm:ss\t(dd/MM)}\r\n", DateTime.Now);
@@ -77,16 +89,7 @@ namespace NetstatProcessWatcher
                     {
                         if (!m_Processes.Any(t => t.id == pid))
                         {
-                            Process p;
-                            try
-                            {
-                                p = Process.GetProcessById(pid);
-                            }
-                            catch (ArgumentException)
-                            {
-                                p = null;
-                            }
-                            
+                            Process p = GetProcessbyIdOrNull(pid);
                             m_Processes.Add(new ProcessInfo(p != null ? p.ProcessName : "(terminated)", pid, false));
                         }
                     }

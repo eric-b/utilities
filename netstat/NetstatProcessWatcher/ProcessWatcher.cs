@@ -65,18 +65,6 @@ namespace NetstatProcessWatcher
             }
         }
 
-        private static bool CheckIfProcessStillExists(int pid)
-        {
-            try
-            {
-                return Process.GetProcessById(pid) != null;
-            }
-            catch (ArgumentException)
-            {
-                return false;
-            }
-        }
-
         private bool TryIdentifyAppPoolProcessId(string appPoolName, out int pid)
         {
             pid = 0;
@@ -107,7 +95,7 @@ namespace NetstatProcessWatcher
                 else
                 {
                     webHost = false;
-                    var processes = DigitsRe.IsMatch(name) ? new Process[] { Process.GetProcessById(int.Parse(name)) } : Process.GetProcessesByName(name);
+                    var processes = DigitsRe.IsMatch(name) ? new Process[] { GetProcessbyIdOrNull(int.Parse(name)) }.Where(t => t != null).ToArray() : Process.GetProcessesByName(name);
                     if (processes.Length == 0)
                     {
                         return false;
@@ -121,7 +109,7 @@ namespace NetstatProcessWatcher
             }
             else
             {
-                var processes = DigitsRe.IsMatch(name) ? new Process[] { Process.GetProcessById(int.Parse(name)) } : Process.GetProcessesByName(name);
+                var processes = DigitsRe.IsMatch(name) ? new Process[] { GetProcessbyIdOrNull(int.Parse(name)) }.Where(t => t != null).ToArray() : Process.GetProcessesByName(name);
                 if (processes.Length != 0)
                 {
                     if (processes.Length != 1)
@@ -150,7 +138,7 @@ namespace NetstatProcessWatcher
             for (int i = 0; i < m_Processes.Count; i++)
             {
                 var item = m_Processes[i];
-                if (item.id == 0 || !CheckIfProcessStillExists(item.id))
+                if (item.id == 0 || GetProcessbyIdOrNull(item.id) == null)
                 {
                     int id;
                     bool isWebHost;

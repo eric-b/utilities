@@ -72,7 +72,7 @@ namespace Netstat
                         var row = new NetstatOutput();
                         outputList.Add(row);
                         row.Protocol = (NsProtocol)Enum.Parse(typeof(NsProtocol), match.Groups["proto"].Value, false);
-                        row.Pid = int.Parse(match.Groups["pid"].Value);
+                        row.pid = int.Parse(match.Groups["pid"].Value);
                         string local = match.Groups["local"].Value;
                         int index = local.LastIndexOf(':');
                         var localAddress = IPAddress.Parse(local.Substring(0, index));
@@ -136,11 +136,11 @@ namespace Netstat
         /// <summary>
         /// Process ID.
         /// </summary>
-        public int Pid { get; set; }
+        public int pid { get; set; }
 
         public override string ToString()
         {
-            return string.Format("{0}\t{1}\t{2}\t{3}\t{4}", Protocol, LocalAddress, RemoteAddress, State, Pid);
+            return string.Format("{0}\t{1}\t{2}\t{3}\t{4}", Protocol, LocalAddress, RemoteAddress, State, pid);
         }
     }
 }
